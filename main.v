@@ -152,8 +152,8 @@ module main (
       .x_logico  (coord_logica_x),
       .y_logico  (coord_logica_y),
       .background_sentido      (fio_sentido),
-		.background_deslocamento (fio_deslocamento),
-		.background_atualizar    (fio_atualizar_background),
+	  .background_deslocamento (fio_deslocamento),
+	  .background_atualizar    (fio_atualizar_background),
       .indice_cor(cor_fundo)
    );
 
