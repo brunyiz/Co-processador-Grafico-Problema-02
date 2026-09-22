@@ -1,0 +1,10 @@
+WIDTH=8;
+DEPTH=2;
+
+ADDRESS_RADIX=DEC;
+DATA_RADIX=HEX;
+
+CONTENT BEGIN
+    0 : E0;   -- vermelho
+    1 : 1C;   -- verde
+END;
