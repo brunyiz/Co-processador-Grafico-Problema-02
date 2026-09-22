@@ -145,7 +145,7 @@ module main (
    wire [7:0] cor_sprite;
    wire [7:0] cor_poligono;
 
-   // Motor de plano de fundo (background): recebe barramento de chaves isolado pela FSM
+   // Motor de plano de fundo (background)
    motor_background motor_background (
       .clk       (clock_vga),
       .reset_n   (reset_vga_n),
