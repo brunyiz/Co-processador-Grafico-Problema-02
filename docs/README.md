@@ -27,7 +27,7 @@ Projeto desenvolvido para a disciplina **MI — Sistemas Digitais** (Problema 02
 
 ### Requisitos Funcionais
 
-#### Arquitetura mínima (Seção 3 do enunciado)
+#### Arquitetura mínima
 
 O sistema deve possuir, no mínimo:
 
@@ -43,7 +43,7 @@ O sistema deve possuir, no mínimo:
 - Compositor.
 - Controlador VGA.
 
-#### Unidades funcionais mínimas (Seção 3.1 do enunciado)
+#### Unidades funcionais mínimas
 
 1. Unidade de busca de instruções.
 2. Unidade de Controle.
@@ -57,14 +57,14 @@ O sistema deve possuir, no mínimo:
 
 O compositor, a unidade de controle de quadro e o controlador VGA devem operar continuamente, independentemente da execução das instruções.
 
-#### Programa gráfico (Seção 3.2 do enunciado)
+#### Programa gráfico
 
 Deve existir, conforme a estratégia adotada pela equipe:
 
 - **Busca ativa**: memória de instruções interna ao projeto contendo um pequeno programa gráfico armazenado em arquivo `.mif` ou `.hex`.
 - **Busca passiva**: arquitetura projetada para receber instruções de uma fila de comandos proveniente da interface MMIO com o processador ARM, acompanhada de um programa em Assembly do ARM que use os recursos do coprocessador.
 
-#### Programa de demonstração (Seção 4.2 do enunciado)
+#### Programa de demonstração
 
 - Pelo menos um programa escrito em Assembly da ISA criada pela equipe.
 - Sintaxe da ISA definida pela própria equipe.
