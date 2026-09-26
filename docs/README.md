@@ -123,5 +123,3 @@ Olhando o diagrama que você enviou, o projeto já tem muito mais do que o Probl
 4. **Sinais `valid`/`busy`/`done`** são exigidos pelo enunciado e não aparecem no diagrama atual. Precisa haver um capítulo ou subseção explicando como o controle sincroniza com as unidades funcionais.
 
 5. **Registrador de status** também é obrigatório e não aparece no diagrama — precisa de seção dedicada.
-
-Se quiser, o próximo passo natural é montar a **tabela de ISA** (mnemônicos + opcodes + formato) como esqueleto, porque ela destrava o resto do relatório e do README. Só avisar.
