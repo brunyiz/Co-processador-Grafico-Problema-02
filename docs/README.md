@@ -277,8 +277,6 @@ Comparando o diagrama que você mandou com o que o enunciado exige:
 
 6. **Testes de "troca de buffers"**: exigido na Seção 5. Se vocês não implementaram frame buffer, digam isso explicitamente na seção "Funcionalidades Não Atendidas".
 
-Se quiser, o próximo passo natural é montar a **tabela de ISA** (mnemônicos + opcodes + formato) com base no que vocês já têm implementado no `main.v` e no `decodificador_comandos.v` (que tem 5 opcodes definidos: `OP_CONFIG_BG`, `OP_SET_TILE`, `OP_CONFIG_SPR`, `OP_RASTER_POLY`, `OP_WRITE_PAL`). Só avisar.
-
 4. **Sinais `valid`/`busy`/`done`** são exigidos pelo enunciado e não aparecem no diagrama atual. Precisa haver um capítulo ou subseção explicando como o controle sincroniza com as unidades funcionais.
 
 5. **Registrador de status** também é obrigatório e não aparece no diagrama — precisa de seção dedicada.
