@@ -1,8 +1,8 @@
 # Co-processador-Grafico-em-FPGA-Problema-02
 
-<!-- Descrição de uma linha do projeto -->
+Núcleo de um coprocessador gráfico programável implementado em Verilog na plataforma Terasic DE1-SoC (Intel/Altera Cyclone V). O projeto dá continuidade ao núcleo gráfico desenvolvido no Problema 01, transformando-o em uma arquitetura programável organizada de forma semelhante a processadores convencionais, com ISA de 32 bits, unidade de busca de instruções, unidade de controle, datapath, banco de registradores, ULA e registrador de status, integrando os motores gráficos (background, sprites e polígonos) como unidades funcionais acionadas por instruções.
 
-Projeto desenvolvido para a disciplina **MI — Sistemas Digitais** (Problema 02, 2026.2).
+Projeto desenvolvido para a disciplina **MI — Sistemas Digitais** (Problema 02, semestre 2026.2).
 
 ---
 
@@ -26,23 +26,105 @@ Projeto desenvolvido para a disciplina **MI — Sistemas Digitais** (Problema 02
 ## Requisitos
 
 ### Requisitos Funcionais
-<!-- Lista dos requisitos do enunciado -->
+
+#### Arquitetura mínima (Seção 3 do enunciado)
+
+O sistema deve possuir, no mínimo:
+
+- Instruction Set Architecture (ISA) de 32 bits.
+- Unidade de busca de instruções.
+- Registrador de Instrução (IR).
+- Unidade de Controle.
+- Banco de registradores.
+- Unidade Lógica e Aritmética (ULA).
+- Datapath.
+- Registrador de status.
+- Unidades funcionais gráficas (motores de background, sprites e polígonos).
+- Compositor.
+- Controlador VGA.
+
+#### Unidades funcionais mínimas (Seção 3.1 do enunciado)
+
+1. Unidade de busca de instruções.
+2. Unidade de Controle.
+3. Unidade Lógica e Aritmética.
+4. Motor de Background.
+5. Motor de Sprites.
+6. Rasterizador de Polígonos.
+7. Unidade de Controle de Quadro.
+8. Compositor.
+9. Controlador VGA.
+
+O compositor, a unidade de controle de quadro e o controlador VGA devem operar continuamente, independentemente da execução das instruções.
+
+#### Programa gráfico (Seção 3.2 do enunciado)
+
+Deve existir, conforme a estratégia adotada pela equipe:
+
+- **Busca ativa**: memória de instruções interna ao projeto contendo um pequeno programa gráfico armazenado em arquivo `.mif` ou `.hex`.
+- **Busca passiva**: arquitetura projetada para receber instruções de uma fila de comandos proveniente da interface MMIO com o processador ARM, acompanhada de um programa em Assembly do ARM que use os recursos do coprocessador.
+
+#### Programa de demonstração (Seção 4.2 do enunciado)
+
+- Pelo menos um programa escrito em Assembly da ISA criada pela equipe.
+- Sintaxe da ISA definida pela própria equipe.
+
+#### Comunicação e sincronização
+
+- Mecanismo de sincronização com o sinal VGA (ex.: sinais `valid`, `busy`, `done`).
+- Toda operação do coprocessador deve ser consequência da execução de uma instrução pertencente à ISA definida.
+
+#### Herança do Problema 01
+
+- Motores de background, sprites e polígonos tratados como unidades funcionais do novo coprocessador.
+- Integração com o compositor, a paleta e a saída VGA já existentes.
 
 ### Requisitos Não Funcionais
-<!-- Modularidade, reinicialização, timing, etc. -->
+
+- Descrição integral em Verilog, com arquitetura modular (controle, datapath, memórias, unidades funcionais e saída de vídeo separados).
+- Todos os registradores e memórias com estratégia definida de reinicialização ou inicialização.
+- Ausência de instabilidade visual, perda de sincronismo ou pixels indefinidos após a inicialização.
+- Uso de memórias em bloco M10K sintetizadas a partir de IPs do Quartus.
+- Código-fonte com organização e comentários que permitam manutenção por terceiros.
+
+### Entregáveis Obrigatórios (Seção 5 do enunciado)
+
+- Código RTL completo do coprocessador gráfico e do top-level utilizado na DE1-SoC.
+- Projeto Quartus com todos os arquivos necessários para compilação e programação da placa.
+- Repositório GitHub organizado, contendo código, documentação, arquivos de síntese e instruções de reprodução.
 
 ---
 
 ## Arquitetura
 
-<!-- Diagrama de blocos -->
-<!-- Explicação do plano de execução de instruções e do plano de vídeo contínuo -->
+<!-- Diagrama de blocos e descrição do plano de execução de instruções
+     e do plano de vídeo contínuo. -->
+
+### Unidades Funcionais
+
+<!-- Descrição de cada unidade funcional e como se relacionam. -->
+
+### Fluxo de Dados e Controle
+
+<!-- Caminho das instruções, dados e sinais de controle. -->
+
+### Sincronização com VGA
+
+<!-- Sinais valid/busy/done e mecanismo de sincronização. -->
 
 ---
 
 ## ISA
 
-<!-- Mnemônicos, formatos, tabela de opcodes, convenções -->
+<!-- Mnemônicos, formatos R/I/J, tabela de opcodes, semântica,
+     convenções de uso dos registradores, formato de codificação
+     das instruções gráficas. -->
+
+### Formatos de Instrução
+
+### Conjunto de Instruções
+
+### Convenções de Registradores
 
 ---
 
@@ -52,10 +134,11 @@ Projeto desenvolvido para a disciplina **MI — Sistemas Digitais** (Problema 02
 |---|---|
 | Placa | |
 | FPGA | |
-| Ferramenta | |
-| Linguagem | |
+| Ferramenta de síntese | |
+| Linguagem de descrição | |
 | Saída de vídeo | |
-| Clock | |
+| Clock de entrada | |
+| Clock de pixel | |
 
 ---
 
@@ -69,26 +152,46 @@ Projeto desenvolvido para a disciplina **MI — Sistemas Digitais** (Problema 02
 
 ## Módulos do Sistema
 
-<!-- Um sub-tópico por módulo, com entradas/processamento/saídas -->
+<!-- Um sub-tópico por módulo, com entradas, processamento e saídas. -->
 
 ---
 
 ## Programa de Demonstração
 
-<!-- Descrição e listagem do programa em Assembly -->
+<!-- Descrição e listagem do programa em Assembly da ISA.
+     Explicar o que cada instrução faz e como o programa é carregado. -->
 
 ---
 
 ## Compilação e Programação
 
-<!-- Passo a passo -->
+<!-- Passo a passo para abrir o projeto Quartus, compilar,
+     programar a placa, conectar o monitor VGA. -->
 
 ---
 
 ## Testes
 
+### Cenários de Teste
+
 | Cenário | Descrição | Método |
 |---|---|---|
+| Transparência | | |
+| Espelhamento | | |
+| Sobreposição | | |
+| Prioridade | | |
+| Troca de buffers | | |
+| Comandos inválidos | | |
+| Sincronização busy/done | | |
+
+### Testbenches
+
+- Testbench por módulo principal.
+- Testbench de integração do coprocessador.
+
+### Scripts de Automação
+
+<!-- Comandos usados para simulação, síntese e programação. -->
 
 ---
 
@@ -96,29 +199,88 @@ Projeto desenvolvido para a disciplina **MI — Sistemas Digitais** (Problema 02
 
 ### Utilização de Recursos
 
+<!-- Tabela extraída do Fitter: ALMs, registradores, pinos,
+     blocos de memória, DSPs. -->
+
 ### Timing
+
+<!-- Frequência máxima reportada, setup slack por corner,
+     caminho crítico identificado. -->
 
 ### Desempenho
 
+<!-- Latência de execução de instruções, throughput gráfico, gargalos. -->
+
 ### Demonstração em Hardware
+
+<!-- Resultados observados na placa, fotos, referências a vídeos. -->
 
 ---
 
 ## Funcionalidades Não Atendidas
 
+<!-- Lista explícita das funcionalidades previstas em requisito
+     que não foram implementadas ou que apresentam defeito. -->
+
 ### Melhorias Possíveis
+
+<!-- Sugestões de evolução. -->
 
 ---
 
-## Observações sobre o estado atual do projeto
+## Autores
 
-Olhando o diagrama que você enviou, o projeto já tem muito mais do que o Problema 01 tinha. Alguns pontos que preciso te avisar, porque vão impactar o relatório e o README quando forem preenchidos:
+- **Bruna de Almeida Nascimento**
+- **Carlos Daniel da Silva Jesus**
+- **Diego Mercês Almeida**
 
-1. **Unidade de busca + Unidade de controle + ARM já aparecem no diagrama.** Se o ARM já está na arquitetura, vocês precisam decidir e documentar se a **busca é ativa** (memória de instruções interna com `.mif`) ou **passiva** (fila de comandos via MMIO). Isso muda todo o Capítulo 2.3 e 2.4 do relatório.
+Bacharelado em Engenharia de Computação — UEFS
+Disciplina: MI — Sistemas Digitais (2026.2)
 
-2. **Três bancos de registradores separados** (um por motor: Background, Sprites, Polígonos). Isso é diferente do que se costuma ver em coprocessadores com banco único. Vale documentar a justificativa (isolamento por unidade funcional, evita contenção).
+---
 
-3. **Diagrama mostra somente o caminho de dados.** Falta no esboço um capítulo específico para a ISA — que é obrigatório pelo enunciado. Sem ISA definida, não dá para escrever nem o `datapath` nem o programa de demonstração.
+## Referências
+
+- TERASIC. **DE1-SoC User Manual**, rev. F. Terasic Technologies Inc., 2018.
+- UNIVERSIDADE ESTADUAL DE FEIRA DE SANTANA. **Problema #2 — 2026.2: Sistema Digital**. Departamento de Tecnologia, Área de Eletrônica, 2026.
+- PINEDA, J. **A Parallel Algorithm for Polygon Rasterization**. SIGGRAPH '88, 1988.
+```
+
+---
+
+## Avisos sobre o estado atual do projeto vs. requisitos
+
+Comparando o diagrama que você mandou com o que o enunciado exige:
+
+| Requisito do enunciado | Status no diagrama atual |
+|---|---|
+| ISA de 32 bits | Não aparece no diagrama — precisa de seção própria |
+| Unidade de busca de instruções | Presente |
+| Registrador de Instrução (IR) | Não aparece explicitamente no diagrama |
+| Unidade de Controle | Presente |
+| Banco de registradores | Presente (3, um por motor) |
+| ULA | **Não aparece no diagrama** |
+| Datapath | Presente implicitamente |
+| Registrador de status | **Não aparece no diagrama** |
+| Unidade de Controle de Quadro | **Não aparece no diagrama** |
+| Compositor | Presente |
+| Controlador VGA | Presente |
+
+### Pontos que vocês precisam decidir antes de preencher o relatório
+
+1. **ULA e registrador de status**: o enunciado exige ambos. Ou vocês já têm e só não estão no diagrama, ou precisam adicionar. Isso é item obrigatório da ISA.
+
+2. **Unidade de Controle de Quadro**: exigida na Seção 3.1, não aparece no diagrama. Precisa existir e ser documentada.
+
+3. **IR (Registrador de Instrução)**: obrigatório na Seção 3 do enunciado. Se ele está dentro da "Unidade de Controle" no diagrama, vale separar ou explicar isso na documentação.
+
+4. **Busca ativa ou passiva de instruções**: o diagrama mostra ARM conectado à Unidade de Busca, o que sugere **busca passiva** (ARM fornece as instruções). Se for esse o caso, o enunciado exige que exista um programa em Assembly do ARM usando os recursos do coprocessador — não apenas o programa em Assembly da ISA própria.
+
+5. **Mecanismo valid/busy/done**: exigido implicitamente na Seção 2 dos objetivos de aprendizagem. Precisa ser documentado.
+
+6. **Testes de "troca de buffers"**: exigido na Seção 5. Se vocês não implementaram frame buffer, digam isso explicitamente na seção "Funcionalidades Não Atendidas".
+
+Se quiser, o próximo passo natural é montar a **tabela de ISA** (mnemônicos + opcodes + formato) com base no que vocês já têm implementado no `main.v` e no `decodificador_comandos.v` (que tem 5 opcodes definidos: `OP_CONFIG_BG`, `OP_SET_TILE`, `OP_CONFIG_SPR`, `OP_RASTER_POLY`, `OP_WRITE_PAL`). Só avisar.
 
 4. **Sinais `valid`/`busy`/`done`** são exigidos pelo enunciado e não aparecem no diagrama atual. Precisa haver um capítulo ou subseção explicando como o controle sincroniza com as unidades funcionais.
 
