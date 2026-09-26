@@ -87,7 +87,7 @@ Deve existir, conforme a estratégia adotada pela equipe:
 - Uso de memórias em bloco M10K sintetizadas a partir de IPs do Quartus.
 - Código-fonte com organização e comentários que permitam manutenção por terceiros.
 
-### Entregáveis Obrigatórios (Seção 5 do enunciado)
+### Entregáveis Obrigatórios 
 
 - Código RTL completo do coprocessador gráfico e do top-level utilizado na DE1-SoC.
 - Projeto Quartus com todos os arquivos necessários para compilação e programação da placa.
@@ -230,9 +230,9 @@ Deve existir, conforme a estratégia adotada pela equipe:
 
 ## Autores
 
-- **Bruna de Almeida Nascimento**
-- **Carlos Daniel da Silva Jesus**
-- **Diego Mercês Almeida**
+- *
+- *
+- *
 
 Bacharelado em Engenharia de Computação — UEFS
 Disciplina: MI — Sistemas Digitais (2026.2)
@@ -244,9 +244,6 @@ Disciplina: MI — Sistemas Digitais (2026.2)
 - TERASIC. **DE1-SoC User Manual**, rev. F. Terasic Technologies Inc., 2018.
 - UNIVERSIDADE ESTADUAL DE FEIRA DE SANTANA. **Problema #2 — 2026.2: Sistema Digital**. Departamento de Tecnologia, Área de Eletrônica, 2026.
 - PINEDA, J. **A Parallel Algorithm for Polygon Rasterization**. SIGGRAPH '88, 1988.
-```
-
----
 
 ## Avisos sobre o estado atual do projeto vs. requisitos
 
