@@ -1,7 +1,5 @@
 # Co-processador-Grafico-em-FPGA-Problema-02
 
-# Coprocessador Gráfico Programável em FPGA — DE1-SoC
-
 Coprocessador gráfico programável implementado em Verilog na plataforma Terasic DE1-SoC (Intel/Altera Cyclone V). O núcleo gera de forma autônoma um sinal de vídeo VGA de 640×480 @ ~60 Hz a partir de uma resolução lógica interna de 320×240, com três camadas gráficas independentes — background (tilemap), sprites e polígonos rasterizados — controladas por um conjunto de instruções definido pela própria equipe (ISA de 32 bits), executado por um datapath com unidade de controle, banco de registradores e ULA.
 
 Projeto desenvolvido para a disciplina **MI — Sistemas Digitais** (Problema 02, semestre 2026.2).
