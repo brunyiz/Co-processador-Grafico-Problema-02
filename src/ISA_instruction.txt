@@ -1,51 +1,89 @@
-32bit para isa
+========================================================================
+ESPECIFICAÇÃO DA ISA 32-BIT PARA COPROCESSADOR GRÁFICO 2D
 
+Tamanho da palavra: 32 bits
+Arquitetura baseada em Opcodes de 4 bits.
+Instruções complexas utilizam múltiplas palavras (Multi-word) para
+facilitar o roteamento e a máquina de estados no hardware.
 
-Instrução- Backgorund mudar o tile: 
-op code > 0000 
-coordenada X tilemap > 000000 
-coordenada y tilemap > 00000
-cor do tile > 00000000
-23bits
+BACKGROUND - MUDAR O TILE (Opcode: 0000)
 
-Instrução- Backgorund Scroll : 
-op code > 0001
-coordenada X tilemap > 000000 
-coordenada y tilemap > 00000
-23bits
+Substitui um tile específico no tilemap.
+Tamanho: 1 Word (32 bits)
 
+[31:28] : Opcode (0000) - 4 bits
+[27:22] : Coordenada X  - 6 bits (Posição X no tilemap: 0 a 63)
+[21:17] : Coordenada Y  - 5 bits (Posição Y no tilemap: 0 a 31)
+[16:09] : Cor/Paleta    - 8 bits (Cor do tile)
+[08:00] : Reservado     - 9 bits (Preenchimento com zeros)
 
-Instrução- sprit- posicionar sprit: 
-op code > 0010
-id sprite > 00000
-coordenada X  > 000000000
-coordenada y  > 00000000
-visivel > 0
-espelhamento > 00
-29bits
+BACKGROUND - SCROLL (Opcode: 0001)
 
-Instrução- polígono draw quadrado: 
-op code > 0011
-coordenada X  > 000000000
-coordenada y  > 00000000
-largura> 000000000
-30bits
-2 instrução 
-altura > 00000000
-cor> 00000000
-16bits
+Define o deslocamento da câmera sobre o background.
+Tamanho: 1 Word (32 bits)
 
-Instrução- polígono draw triangulo: 
-op code > 0100
-coordenada X  > 000000000
-coordenada y  > 00000000
-coordenada X2  > 000000000
-coordenada y2  > 00000000
-coordenada X3  > 000000000
-coordenada y3  > 00000000
-cor > 00000000
-63bits
+[31:28] : Opcode (0001) - 4 bits
+[27:22] : Scroll X      - 6 bits (Deslocamento horizontal)
+[21:17] : Scroll Y      - 5 bits (Deslocamento vertical)
+[16:00] : Reservado     - 17 bits (Preenchimento com zeros)
 
+SPRITE - POSICIONAR SPRITE (Opcode: 0010)
 
-sincronizador de quadros
+Atualiza os atributos (posição, espelhamento, visibilidade) de um sprite.
+Tamanho: 1 Word (32 bits)
 
+[31:28] : Opcode (0010) - 4 bits
+[27:23] : ID Sprite     - 5 bits (Identificador: 0 a 31)
+[22:14] : Coordenada X  - 9 bits (Posição X na tela)
+[13:06] : Coordenada Y  - 8 bits (Posição Y na tela)
+[05:05] : Visível       - 1 bit  (1 = Ativo, 0 = Oculto)
+[04:03] : Espelhamento  - 2 bits (00=Normal, 01=Horiz, 10=Vert, 11=Ambos)
+[02:00] : Reservado     - 3 bits (Preenchimento com zeros)
+
+POLÍGONO - DRAW QUADRADO (Opcode: 0011)
+
+Desenha um retângulo na tela.
+Tamanho: 2 Words (64 bits)
+
+Palavra 1 (Word 1): Posição e Largura
+[31:28] : Opcode (0011) - 4 bits
+[27:19] : Coordenada X  - 9 bits (Posição X da origem)
+[18:11] : Coordenada Y  - 8 bits (Posição Y da origem)
+[10:02] : Largura       - 9 bits (Largura do retângulo)
+[01:00] : Reservado     - 2 bits (Preenchimento com zeros)
+
+Palavra 2 (Word 2): Altura e Cor
+[31:16] : Reservado     - 16 bits (Preenchimento com zeros)
+[15:08] : Altura        - 8 bits  (Altura do retângulo)
+[07:00] : Cor           - 8 bits  (Cor do preenchimento)
+
+POLÍGONO - DRAW TRIÂNGULO (Opcode: 0100)
+
+Desenha um triângulo utilizando três coordenadas (vértices).
+Tamanho: 3 Words (96 bits)
+
+Palavra 1 (Word 1): Vértice 1 e Cor
+[31:28] : Opcode (0100) - 4 bits
+[27:19] : Coordenada X1 - 9 bits (Posição X do Vértice 1)
+[18:11] : Coordenada Y1 - 8 bits (Posição Y do Vértice 1)
+[10:03] : Cor           - 8 bits (Cor de preenchimento)
+[02:00] : Reservado     - 3 bits (Preenchimento com zeros)
+
+Palavra 2 (Word 2): Vértice 2
+[31:17] : Reservado     - 15 bits (Preenchimento com zeros)
+[16:08] : Coordenada X2 - 9 bits  (Posição X do Vértice 2)
+[07:00] : Coordenada Y2 - 8 bits  (Posição Y do Vértice 2)
+
+Palavra 3 (Word 3): Vértice 3
+[31:17] : Reservado     - 15 bits (Preenchimento com zeros)
+[16:08] : Coordenada X3 - 9 bits  (Posição X do Vértice 3)
+[07:00] : Coordenada Y3 - 8 bits  (Posição Y do Vértice 3)
+
+SINCRONIZADOR DE QUADROS - VSYNC (Opcode: 0101)
+
+Pausa a execução da fila de instruções e aguarda o sinal de VBlank
+para evitar "screen tearing".
+Tamanho: 1 Word (32 bits)
+
+[31:28] : Opcode (0101) - 4 bits
+[27:00] : Reservado     - 28 bits (Ignorado pela decodificação)
