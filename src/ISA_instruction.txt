@@ -59,25 +59,18 @@ Palavra 2 (Word 2): Altura e Cor
 
 POLÍGONO - DRAW TRIÂNGULO (Opcode: 0100)
 
-Desenha um triângulo utilizando três coordenadas (vértices).
-Tamanho: 3 Words (96 bits)
+Instrução Polígono - Draw Triângulo (64 bits)Bit RangeCampoTamanhoDescrição
+[63:60] : Opcode 4 bits0100
+[59:51] : Coord X1 9 bits Posição X do Vértice 1
+[50:43] : Coord Y1 8 bits Posição Y do Vértice 1
+[42:34] : Coord X2 9 bits Posição X do Vértice 2
+[33:26] : Coord Y2 8 bits Posição Y do Vértice 2
+[25:17] : Coord X3 9 bits Posição X do Vértice 3
+[16:9] : Coord Y3 8 bits Posição Y do Vértice 3
+[8:1] : Cor 8 bits Cor do preenchimento
+[0] : Reservado 1 bit 0 (Preenchimento)
 
-Palavra 1 (Word 1): Vértice 1 e Cor
-[31:28] : Opcode (0100) - 4 bits
-[27:19] : Coordenada X1 - 9 bits (Posição X do Vértice 1)
-[18:11] : Coordenada Y1 - 8 bits (Posição Y do Vértice 1)
-[10:03] : Cor           - 8 bits (Cor de preenchimento)
-[02:00] : Reservado     - 3 bits (Preenchimento com zeros)
 
-Palavra 2 (Word 2): Vértice 2
-[31:17] : Reservado     - 15 bits (Preenchimento com zeros)
-[16:08] : Coordenada X2 - 9 bits  (Posição X do Vértice 2)
-[07:00] : Coordenada Y2 - 8 bits  (Posição Y do Vértice 2)
-
-Palavra 3 (Word 3): Vértice 3
-[31:17] : Reservado     - 15 bits (Preenchimento com zeros)
-[16:08] : Coordenada X3 - 9 bits  (Posição X do Vértice 3)
-[07:00] : Coordenada Y3 - 8 bits  (Posição Y do Vértice 3)
 
 SINCRONIZADOR DE QUADROS - VSYNC (Opcode: 0101)
 
