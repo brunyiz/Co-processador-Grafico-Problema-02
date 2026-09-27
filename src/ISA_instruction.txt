@@ -1,0 +1,51 @@
+32bit para isa
+
+
+Instrução- Backgorund mudar o tile: 
+op code > 0000 
+coordenada X tilemap > 000000 
+coordenada y tilemap > 00000
+cor do tile > 00000000
+23bits
+
+Instrução- Backgorund Scroll : 
+op code > 0001
+coordenada X tilemap > 000000 
+coordenada y tilemap > 00000
+23bits
+
+
+Instrução- sprit- posicionar sprit: 
+op code > 0010
+id sprite > 00000
+coordenada X  > 000000000
+coordenada y  > 00000000
+visivel > 0
+espelhamento > 00
+29bits
+
+Instrução- polígono draw quadrado: 
+op code > 0011
+coordenada X  > 000000000
+coordenada y  > 00000000
+largura> 000000000
+30bits
+2 instrução 
+altura > 00000000
+cor> 00000000
+16bits
+
+Instrução- polígono draw triangulo: 
+op code > 0100
+coordenada X  > 000000000
+coordenada y  > 00000000
+coordenada X2  > 000000000
+coordenada y2  > 00000000
+coordenada X3  > 000000000
+coordenada y3  > 00000000
+cor > 00000000
+63bits
+
+
+sincronizador de quadros
+
