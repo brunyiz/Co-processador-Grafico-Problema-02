@@ -1,87 +1,116 @@
 // motor_background.v
+// Plano de fundo baseado em tilemap 40 x 30 (tiles de 8 x 8 pixels).
+//
+// Usa apenas a mapa_rom (1200 x 8, init = background_map.mif).
+// Cada palavra da ROM ja e o indice de cor (RGB332) do tile naquela posicao,
+// portanto o dado lido da ROM vai direto para a saida indice_cor.
+//
+// Scroll (controle_sw, vindo da fsm_controle):
+//   SW3 = esquerda | SW2 = baixo | SW1 = cima | SW0 = direita
+// O deslocamento e feito SEMPRE em passos de 1 tile (8 pixels), com
+// repeticao automatica enquanto a chave estiver ligada, e com wrap
+// (a cena e repetida: 40 tiles na horizontal, 30 na vertical).
+//
+// Fluxo:
+//   x/y logico -> tile da tela (x>>3, y>>3) + scroll_tile (mod 40 / mod 30)
+//              -> endereco = tile_y*40 + tile_x -> mapa_rom -> indice_cor
+//
+// Latencia: a mapa_rom (M10K) tem endereco registrado => 1 ciclo de clk.
+
 module motor_background (
     input  wire        clk,
     input  wire        reset_n,
-    input  wire [8:0]  x_logico,        // 0..319 (VGA pede pixel)
-    input  wire [7:0]  y_logico,        // 0..239 (VGA pede pixel)
-    input  wire [1:0]  background_sentido,
-    input  wire [9:0]  background_deslocamento,
-    input  wire        background_atualizar,
-    output wire [7:0]  indice_cor       // Cor sai direto do mapa
+    input  wire [8:0]  x_logico,        // 0..319
+    input  wire [7:0]  y_logico,        // 0..239
+    input  wire [3:0]  controle_sw,     // SW3=esq, SW2=baixo, SW1=cima, SW0=dir
+    output wire [7:0]  indice_cor
 );
 
     // ============================================================
-    // SCROLL
+    // PARAMETROS
     // ============================================================
-    reg [5:0] scroll_tile_x;
-    reg [4:0] scroll_tile_y;
+    // Ciclos de clk (25 MHz) entre dois passos de scroll.
+    // 3_000_000 / 25 MHz = 120 ms por tile (~8 tiles/s).
+    parameter PASSO_CICLOS = 22'd3_000_000;
+
+    localparam TILES_X = 6'd40;
+    localparam TILES_Y = 5'd30;
+
+    // ============================================================
+    // SCROLL EM TILES
+    // ============================================================
+    reg [5:0] scroll_tile_x;   // 0..39
+    reg [4:0] scroll_tile_y;   // 0..29
+
+    reg [21:0] contador_passo;
+    wire       pulso_passo = (contador_passo == PASSO_CICLOS - 22'd1);
+
+    always @(posedge clk or negedge reset_n) begin
+        if (!reset_n)
+            contador_passo <= 22'd0;
+        else if (pulso_passo)
+            contador_passo <= 22'd0;
+        else
+            contador_passo <= contador_passo + 22'd1;
+    end
 
     always @(posedge clk or negedge reset_n) begin
         if (!reset_n) begin
             scroll_tile_x <= 6'd0;
             scroll_tile_y <= 5'd0;
         end
-        else if (background_atualizar) begin
-            case (background_sentido)
-                2'b10: begin // Esquerda
-                    if (scroll_tile_x >= background_deslocamento)
-                        scroll_tile_x <= scroll_tile_x - background_deslocamento[5:0];
-                    else
-                        scroll_tile_x <= (6'd40 + scroll_tile_x) - background_deslocamento[5:0];
-                end
-                    
-                2'b11: begin // Direita
-                    if ((scroll_tile_x + background_deslocamento[5:0]) >= 6'd40)
-                        scroll_tile_x <= (scroll_tile_x + background_deslocamento[5:0]) - 6'd40;
-                    else
-                        scroll_tile_x <= scroll_tile_x + background_deslocamento[5:0];
-                end
+        else if (pulso_passo) begin
+            // Horizontal (esquerda tem prioridade sobre direita)
+            if (controle_sw[3]) begin
+                if (scroll_tile_x == 6'd0)
+                    scroll_tile_x <= TILES_X - 6'd1;
+                else
+                    scroll_tile_x <= scroll_tile_x - 6'd1;
+            end
+            else if (controle_sw[0]) begin
+                if (scroll_tile_x == TILES_X - 6'd1)
+                    scroll_tile_x <= 6'd0;
+                else
+                    scroll_tile_x <= scroll_tile_x + 6'd1;
+            end
 
-                2'b00: begin // Cima
-                    if (scroll_tile_y >= background_deslocamento)
-                        scroll_tile_y <= scroll_tile_y - background_deslocamento[4:0];
-                    else
-                        scroll_tile_y <= (5'd30 + scroll_tile_y) - background_deslocamento[4:0];
-                end
-                    
-                2'b01: begin // Baixo
-                    if ((scroll_tile_y + background_deslocamento[4:0]) >= 5'd30)
-                        scroll_tile_y <= (scroll_tile_y + background_deslocamento[4:0]) - 5'd30;
-                    else
-                        scroll_tile_y <= scroll_tile_y + background_deslocamento[4:0];
-                end
-            endcase
+            // Vertical (cima tem prioridade sobre baixo)
+            if (controle_sw[1]) begin
+                if (scroll_tile_y == 5'd0)
+                    scroll_tile_y <= TILES_Y - 5'd1;
+                else
+                    scroll_tile_y <= scroll_tile_y - 5'd1;
+            end
+            else if (controle_sw[2]) begin
+                if (scroll_tile_y == TILES_Y - 5'd1)
+                    scroll_tile_y <= 5'd0;
+                else
+                    scroll_tile_y <= scroll_tile_y + 5'd1;
+            end
         end
     end
 
     // ============================================================
-    // COORDENADA DA CENA COM WRAP
+    // TILE DA TELA + SCROLL (COM WRAP)
     // ============================================================
+    // Como o scroll e em tiles inteiros, nao ha soma em pixels:
+    // basta somar o scroll ao indice do tile da tela.
+    wire [5:0] tela_tile_x = x_logico[8:3];   // 0..39
+    wire [4:0] tela_tile_y = y_logico[7:3];   // 0..29
 
-    // Multiplica o tile por 8 para transformar o scroll em pixel e alinhar com o VGA
-    wire [9:0] pixel_scroll_x = {4'b0, scroll_tile_x} << 3;
-    wire [8:0] pixel_scroll_y = {4'b0, scroll_tile_y} << 3;
+    wire [6:0] soma_x = {1'b0, tela_tile_x} + {1'b0, scroll_tile_x};  // 0..78
+    wire [5:0] soma_y = {1'b0, tela_tile_y} + {1'b0, scroll_tile_y};  // 0..58
 
-    // Soma o scroll em pixel com a coordenada do VGA
-    wire [9:0] soma_x = {1'b0, x_logico} + pixel_scroll_x;
-    wire [8:0] soma_y = {1'b0, y_logico} + pixel_scroll_y;
+    wire [5:0] tile_x = (soma_x >= {1'b0, TILES_X}) ? (soma_x - {1'b0, TILES_X}) : soma_x[5:0];
+    wire [4:0] tile_y = (soma_y >= {1'b0, TILES_Y}) ? (soma_y - {1'b0, TILES_Y}) : soma_y[4:0];
 
-    wire [8:0] abs_x = (soma_x >= 10'd320) ? (soma_x - 10'd320) : soma_x[8:0];
-    wire [7:0] abs_y = (soma_y >= 9'd240) ?  (soma_y - 9'd240)  : soma_y[7:0];
-
-    // ============================================================
-    // DESCARTA O DETALHE DO PIXEL E LÊ O MAPA
-    // ============================================================
-
-    // Pegamos apenas os bits altos [8:3]. Isso significa que os pixels de 0 a 7
-    // caem no tile 0. Os pixels de 8 a 15 caem no tile 1, e assim por diante.
-    wire [5:0] tile_x = abs_x[8:3]; // 0..39
-    wire [4:0] tile_y = abs_y[7:3]; // 0..29
-
-    wire [10:0] linha_x40 = ({6'd0, tile_y} << 5) + ({6'd0, tile_y} << 3);
+    // endereco = tile_y * 40 + tile_x   (40 = 32 + 8)
+    wire [10:0] linha_x40     = ({6'd0, tile_y} << 5) + ({6'd0, tile_y} << 3);
     wire [10:0] endereco_mapa = linha_x40 + {5'd0, tile_x};
 
-    // A ROM do Mapa liga direto na saída indice_cor
+    // ============================================================
+    // MAPA_ROM (1200 x 8): a palavra lida ja e o indice de cor
+    // ============================================================
     mapa_rom ROM_MAPA (
         .address (endereco_mapa),
         .clock   (clk),
